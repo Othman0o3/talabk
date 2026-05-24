@@ -1,266 +1,268 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
-    AppBar,
-    Toolbar,
-    Box,
-    IconButton,
-    Button,
-    Drawer,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Menu,
-    MenuItem,
-    Collapse,
-    Fade,
-    Divider,
-    Typography
+  AppBar, Toolbar, Box, Typography, Button, IconButton,
+  Drawer, List, ListItem, ListItemIcon, ListItemText,
+  Menu, MenuItem, Divider, Collapse,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import BuildIcon from "@mui/icons-material/Build";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import PolicyIcon from "@mui/icons-material/Policy";
+import StoreMallDirectoryIcon from "@mui/icons-material/StoreMallDirectory";
+import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import PhoneIcon from "@mui/icons-material/Phone";
-import UserIcon from "@mui/icons-material/SupervisedUserCircle";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import StoreIcon from "@mui/icons-material/Storefront";
-import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
-import Logo from '../images/LLO.png';
+import SecurityIcon from "@mui/icons-material/Security";
+import InfoIcon from "@mui/icons-material/Info";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
+import Fade from "@mui/material/Fade";
+import logo from "../images/LLO.png";
 
-const navButtonStyle = {
-    color: "rgb(219 38 42)",
-    fontSize: "18px",
-    fontFamily: "Almarai",
-    '& .MuiButton-startIcon': { marginLeft: '12px', marginRight: '0px' },
-    '&:hover': { backgroundColor: 'rgba(219, 38, 42, 0.05)' }
+const RED = "#E8322A";
+
+// Exact nav button style from bundle (Wo object)
+const navBtnSx = {
+  color: "#1A1A1A",
+  fontSize: { lg: "14px", xl: "16px" },
+  fontFamily: "Almarai",
+  fontWeight: 700,
+  whiteSpace: "nowrap",
+  "&:hover": { backgroundColor: "rgba(232, 50, 42, 0.05)", color: RED },
 };
 
-function Nav({MainRef, servicesRef, ratesRef, contactRef }) {
-    const [isOpen, setIsOpen] = useState(false);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [timer, setTimer] = useState(null);
-    const [mobileSubMenuOpen, setMobileSubMenuOpen] = useState(false);
+export default function Navbar({ MainRef, servicesRef, ratesRef, contactRef }) {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 50 });
 
-    const navigate = useNavigate();
-    const location = useLocation();
-    const isMenuOpen = Boolean(anchorEl);
+  const scrollToSection = (path, ref) => {
+    setDrawerOpen(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => ref?.current?.scrollIntoView({ behavior: "smooth" }), 100);
+    } else {
+      ref?.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
-    const handleNavClick = (path, ref) => {
-        setIsOpen(false);
-        setAnchorEl(null);
-        
-        if (location.pathname !== "/") {
-            navigate("/");
-        } else {
-            ref?.current?.scrollIntoView({ behavior: "smooth" });
-        }
-    };
+  return (
+    <>
+      <AppBar
+        position="sticky"
+        elevation={scrolled ? 2 : 0}
+        sx={{
+          bgcolor: scrolled ? "rgba(255, 255, 255, 0.85)" : "#fff",
+          backdropFilter: scrolled ? "blur(10px)" : "none",
+          borderBottom: "1px solid #eee",
+          direction: "rtl",
+        }}
+      >
+        <Toolbar sx={{ justifyContent: "space-between", height: 80, px: { xs: 2, lg: 4 } }}>
+          
+          {/* Hamburger — mobile only */}
+          <IconButton
+            onClick={() => setDrawerOpen(true)}
+            sx={{ display: { lg: "none" }, color: RED, order: { xs: 1, lg: 0 } }}
+          >
+            <MenuIcon fontSize="large" />
+          </IconButton>
 
-    const handleOpenMenu = (event) => {
-        if (timer) {
-            clearTimeout(timer);
-            setTimer(null);
-        }
-        setAnchorEl(event.currentTarget);
-    };
-    const handleCloseMenu = () => {
-        setTimer(setTimeout(() => {
-            setAnchorEl(null);
-        }, 300));
-    };
+          {/* Logo */}
+          <Box
+            component={Link}
+            to="/"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              position: { xs: "absolute", lg: "static" },
+              left: { xs: "50%", lg: "unset" },
+              transform: { xs: "translateX(-50%)", lg: "none" },
+              order: { xs: 2, lg: 1 },
+              textDecoration: "none",
+            }}
+          >
+            <img src={logo} alt="Logo" style={{ height: scrolled ? 55 : 65, transition: "0.3s" }} />
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  fontFamily: "almarai",
+                  fontWeight: "400",
+                  color: "text.secondary",
+                  fontSize: "0.8rem",
+                  mr: "1.5",
+                  letterSpacing: 1,
+                }}
+              >
+                ديما قراب
+              </Typography>
+            </Box>
+          </Box>
 
-    return (
-        <>
-            <AppBar position="sticky" sx={{  height: 80, justifyContent: "center", direction: "rtl", backgroundColor: "#fff" }} elevation={1}>
-                <Toolbar disableGutters sx={{ display: "flex", justifyContent: "space-between", width: "100%", px: { lg: 4 }, position: 'relative', minHeight: 80 }}>
-                    <Box
-                        component={Link}
-                        to="/"
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            cursor: "pointer",
-                            minWidth: 'fit-content',
-                            position: { xs: 'absolute', lg: 'static' },
-                            left: { xs: '50%', lg: 'auto' },
-                            transform: { xs: 'translateX(-50%)', lg: 'none' },
-                            zIndex: 10,
-                        }}
-                    >
-                        <img src={Logo} alt="Talabk logo" style={{ height: 80, width: 80 }} />
-                    </Box>
-                    <Box
-                        sx={{
-                            display: { xs: "none", lg: "flex" },
-                            gap: 2,
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                            flexGrow: 1,
-                            pl: 5,
-                        }}
-                    >
-                        <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 2, alignItems: 'center' }}>
-                            <Button onClick={() => handleNavClick("/", MainRef)} startIcon={<HomeIcon />} sx={navButtonStyle}>
-                                الرئيسية
-                            </Button>
-                            <Box
-                                onMouseEnter={handleOpenMenu}
-                                onMouseLeave={handleCloseMenu}
-                                sx={{ display: 'flex', alignItems: 'center' }}
-                            >
-                                <Button
-                                    onClick={() => handleNavClick("/", servicesRef)}
-                                    sx={{ direction: "rtl", mt: 1, ...navButtonStyle }}
-                                    startIcon={<BuildIcon />}
-                                    endIcon={isMenuOpen ? <ExpandLess /> : <ExpandMore />}
-                                >
-                                    خدماتنا
-                                </Button>
-                                <Menu
-                                    anchorEl={anchorEl}
-                                    open={isMenuOpen}
-                                    onClose={() => setAnchorEl(null)}
-                                    TransitionComponent={Fade}
-                                    sx={{ direction: "rtl", mt: 1 }}
-                                    MenuListProps={{
-                                        onMouseEnter: () => {
-                                            if (timer) {
-                                                clearTimeout(timer);
-                                                setTimer(null);
-                                            }
-                                        },
-                                        onMouseLeave: handleCloseMenu,
-                                    }}
-                                >
-                                    <MenuItem component={Link} to="/خدمات المتاجر" onClick={() => setAnchorEl(null)} sx={{ fontFamily: "Almarai" }}>
-                                        <ListItemIcon><StoreIcon fontSize="small" /></ListItemIcon>
-                                        خدمات المتاجر
-                                    </MenuItem>
-                                    <MenuItem component={Link} to="/خدمات السائقين" onClick={() => setAnchorEl(null)} sx={{ fontFamily: "Almarai" }}>
-                                        <ListItemIcon><DeliveryDiningIcon fontSize="small" /></ListItemIcon>
-                                        خدمات السائقين
-                                    </MenuItem>
-                                </Menu>
-                            </Box>
-                            <Button onClick={() => handleNavClick("/rates", ratesRef)} startIcon={<LocalShippingIcon />} sx={navButtonStyle}>
-                                أسعار التوصيل
-                            </Button>
-                            <Button component={Link} to="/متجر طلبك" startIcon={<StoreIcon />} sx={navButtonStyle}>
-                                متجر طلبك
-                            </Button>
-                            <Button onClick={() => handleNavClick("/contact", contactRef)} startIcon={<PhoneIcon />} sx={navButtonStyle}>
-                                اتصل بنا
-                            </Button>
-                            <Button component={Link} to="سياسات الشحن" startIcon={<PolicyIcon />} sx={navButtonStyle}>
-                                سياسات الشحن
-                            </Button>
-                            <Button startIcon={<UserIcon />} sx={navButtonStyle} href="https://talabksys.ly" rel='noreferrer'>
-                                تسجيل الدخول
-                            </Button>
-                        </Box>
-                    </Box>
-                    <IconButton onClick={() => setIsOpen(true)} sx={{ display: { lg: "none" }, color: "rgb(219 38 42)" }}>
-                        <MenuIcon />
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
+          {/* Desktop Nav Links */}
+          <Box
+            sx={{
+              display: { xs: "none", lg: "flex" },
+              gap: { lg: 1, xl: 2 },
+              alignItems: "center",
+              order: 2,
+            }}
+          >
+            <Button onClick={() => scrollToSection("/", MainRef)} sx={navBtnSx}>
+              الرئيسية
+            </Button>
 
-<Drawer anchor="right" open={isOpen} onClose={() => setIsOpen(false)}>
-    <Box sx={{ width: 280, textAlign: "right", pt: 2 }}>
-        <Typography variant="h6" sx={{ px: 2, pb: 2, fontWeight: 900, color: '#db262a', fontFamily: 'Almarai' }}>
-        </Typography>
-        <Divider />
-        
-        <List sx={{ direction: "rtl"}}>
-            <ListItem disablePadding>
-                <ListItemButton onClick={() => { handleNavClick("/", MainRef); setIsOpen(false); }}>
-                    <ListItemIcon><HomeIcon sx={{ color: '#1a1a1a' }} /></ListItemIcon>
-                    <ListItemText primary="الرئيسية" sx={{ '& span': { fontFamily: 'Almarai', fontWeight: 600 } }} />
-                </ListItemButton>
+            {/* Services hover dropdown */}
+            <Box
+              onMouseEnter={(e) => setAnchorEl(e.currentTarget)}
+              onMouseLeave={() => setAnchorEl(null)}
+            >
+              <Button
+                sx={navBtnSx}
+                endIcon={anchorEl ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              >
+                خدماتنا
+              </Button>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                TransitionComponent={Fade}
+                sx={{ pointerEvents: "none", mt: 1, direction: "rtl" }}
+                MenuListProps={{
+                  onMouseEnter: () => setAnchorEl(anchorEl),
+                  onMouseLeave: () => setAnchorEl(null),
+                  sx: { pointerEvents: "auto" },
+                }}
+              >
+                <MenuItem
+                  onClick={() => { navigate("/خدمات المتاجر"); setAnchorEl(null); }}
+                  sx={{ fontFamily: "Almarai" }}
+                >
+                  خدمات المتاجر
+                </MenuItem>
+                <MenuItem
+                  onClick={() => { navigate("/خدمات السائقين"); setAnchorEl(null); }}
+                  sx={{ fontFamily: "Almarai" }}
+                >
+                  خدمات السائقين
+                </MenuItem>
+              </Menu>
+            </Box>
+
+            <Button component={Link} to="/الأسعار" sx={navBtnSx}>الأسعار</Button>
+            <Button component={Link} to="/متجر طلبك" sx={navBtnSx}>المتجر</Button>
+            <Button onClick={() => scrollToSection("/contact", contactRef)} sx={navBtnSx}>اتصل بنا</Button>
+            <Button component={Link} to="/سياسات الشحن" sx={navBtnSx}>السياسات</Button>
+            <Button component={Link} to="/من نحن" sx={navBtnSx}>من نحن</Button>
+          </Box>
+
+          {/* Register CTA — desktop */}
+          <Box sx={{ display: { xs: "none", lg: "block" }, order: 3 }}>
+            <Button
+              variant="contained"
+              href="https://talabksys.ly"
+              sx={{
+                bgcolor: RED,
+                fontFamily: "Almarai",
+                fontWeight: 800,
+                borderRadius: "10px",
+                px: 3,
+                "&:hover": { bgcolor: "#C42820" },
+              }}
+            >
+              سجل كتاجر الان
+            </Button>
+          </Box>
+
+          {/* Spacer to balance hamburger on mobile */}
+          <Box sx={{ width: 48, display: { lg: "none" }, order: 3 }} />
+        </Toolbar>
+      </AppBar>
+
+      {/* Mobile Drawer */}
+      <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <Box sx={{ width: 280, direction: "rtl" }}>
+          {/* Logo in drawer */}
+          <Box sx={{ p: 3, textAlign: "center" }}>
+            <img src={logo} alt="Logo" style={{ height: 60 }} />
+          </Box>
+          <Divider />
+
+          <List>
+            {/* Home */}
+            <ListItem button onClick={() => scrollToSection("/", MainRef)}>
+              <ListItemIcon><HomeIcon /></ListItemIcon>
+              <ListItemText primary="الرئيسية" sx={{ "& span": { fontFamily: "Almarai" } }} />
             </ListItem>
 
-            <ListItemButton 
-                onClick={(e) => {
-                    e.stopPropagation(); 
-                    setMobileSubMenuOpen(!mobileSubMenuOpen);
-                }}
-                sx={{ bgcolor: mobileSubMenuOpen ? '#f5f5f5' : 'transparent' }}
-            >
-                <ListItemIcon><BuildIcon sx={{ color: mobileSubMenuOpen ? '#db262a' : '#1a1a1a' }} /></ListItemIcon>
-                <ListItemText primary="خدماتنا" sx={{ '& span': { fontFamily: 'Almarai', fontWeight: 600 } }} />
-                {mobileSubMenuOpen ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            
-            <Collapse in={mobileSubMenuOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#fafafa' }}>
-                    <ListItemButton 
-                        component={Link} 
-                        to="/خدمات المتاجر" 
-                        onClick={() => setIsOpen(false)}
-                        sx={{ pr: 4, py: 1.5 }}
-                    >
-                        <ListItemIcon><StoreIcon fontSize="small" /></ListItemIcon>
-                        <ListItemText primary="خدمات المتاجر" sx={{ '& span': { fontFamily: 'Almarai', fontSize: '0.9rem' } }} />
-                    </ListItemButton>
-                    
-                    <ListItemButton 
-                        component={Link} 
-                        to="/خدمات السائقين" 
-                        onClick={() => setIsOpen(false)}
-                        sx={{ pr: 4, py: 1.5 }}
-                    >
-                        <ListItemIcon><DeliveryDiningIcon fontSize="small" /></ListItemIcon>
-                        <ListItemText primary="خدمات السائقين" sx={{ '& span': { fontFamily: 'Almarai', fontSize: '0.9rem' } }} />
-                    </ListItemButton>
-                </List>
+            {/* Services expandable */}
+            <ListItem button onClick={() => setMobileServicesOpen((p) => !p)}>
+              <ListItemIcon><BuildIcon /></ListItemIcon>
+              <ListItemText primary="خدماتنا" sx={{ "& span": { fontFamily: "Almarai" } }} />
+              {mobileServicesOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </ListItem>
+            <Collapse in={mobileServicesOpen} timeout="auto">
+              <Box sx={{ display: "block", bgcolor: "#f9f9f9" }}>
+                <ListItem button component={Link} to="/خدمات المتاجر" onClick={() => setDrawerOpen(false)} sx={{ pr: 4 }}>
+                  <ListItemIcon><StoreMallDirectoryIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="خدمات المتاجر" sx={{ "& span": { fontFamily: "Almarai", fontSize: "0.9rem" } }} />
+                </ListItem>
+                <ListItem button component={Link} to="/خدمات السائقين" onClick={() => setDrawerOpen(false)} sx={{ pr: 4 }}>
+                  <ListItemIcon><TwoWheelerIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="خدمات السائقين" sx={{ "& span": { fontFamily: "Almarai", fontSize: "0.9rem" } }} />
+                </ListItem>
+              </Box>
             </Collapse>
 
-            <Divider sx={{ my: 1 }} />
-
-            <ListItem disablePadding>
-                <ListItemButton onClick={() => { handleNavClick("/rates", ratesRef); setIsOpen(false); }}>
-                    <ListItemIcon><LocalShippingIcon sx={{ color: '#1a1a1a' }} /></ListItemIcon>
-                    <ListItemText primary="أسعار التوصيل" sx={{ '& span': { fontFamily: 'Almarai', fontWeight: 600 } }} />
-                </ListItemButton>
+            {/* Prices */}
+            <ListItem button component={Link} to="/الأسعار" onClick={() => setDrawerOpen(false)}>
+              <ListItemIcon><LocalShippingIcon /></ListItemIcon>
+              <ListItemText primary="الأسعار" sx={{ "& span": { fontFamily: "Almarai" } }} />
             </ListItem>
 
-            <ListItem disablePadding>
-                <ListItemButton component={Link} to="/متجر طلبك" onClick={() => setIsOpen(false)}>
-                    <ListItemIcon><StoreIcon sx={{ color: '#1a1a1a' }} /></ListItemIcon>
-                    <ListItemText primary="متجر طلبك" sx={{ '& span': { fontFamily: 'Almarai', fontWeight: 600 } }} />
-                </ListItemButton>
+            {/* Store */}
+            <ListItem button component={Link} to="/متجر طلبك" onClick={() => setDrawerOpen(false)}>
+              <ListItemIcon><StoreMallDirectoryIcon /></ListItemIcon>
+              <ListItemText primary="المتجر" sx={{ "& span": { fontFamily: "Almarai" } }} />
             </ListItem>
 
-            <ListItem disablePadding>
-                <ListItemButton onClick={() => { handleNavClick("/contact", contactRef); setIsOpen(false); }}>
-                    <ListItemIcon><PhoneIcon sx={{ color: '#1a1a1a' }} /></ListItemIcon>
-                    <ListItemText primary="اتصل بنا" sx={{ '& span': { fontFamily: 'Almarai', fontWeight: 600 } }} />
-                </ListItemButton>
+            {/* Contact */}
+            <ListItem button onClick={() => scrollToSection("/contact", contactRef)}>
+              <ListItemIcon><PhoneIcon /></ListItemIcon>
+              <ListItemText primary="اتصل بنا" sx={{ "& span": { fontFamily: "Almarai" } }} />
             </ListItem>
 
-            <ListItem disablePadding>
-                <ListItemButton component={Link} to="/سياسات الشحن" onClick={() => setIsOpen(false)}>
-                    <ListItemIcon><PolicyIcon sx={{ color: '#1a1a1a' }} /></ListItemIcon>
-                    <ListItemText primary="سياسات الشحن" sx={{ '& span': { fontFamily: 'Almarai', fontWeight: 600 } }} />
-                </ListItemButton>
+            {/* Policies */}
+            <ListItem button component={Link} to="/سياسات الشحن" onClick={() => setDrawerOpen(false)}>
+              <ListItemIcon><SecurityIcon /></ListItemIcon>
+              <ListItemText primary="سياسات الشحن" sx={{ "& span": { fontFamily: "Almarai" } }} />
             </ListItem>
 
-            <ListItem disablePadding>
-                <ListItemButton component="a" href="https://talabksys.ly" rel='noreferrer' onClick={() => setIsOpen(false)}>
-                    <ListItemIcon><UserIcon sx={{ color: '#db262a' }} /></ListItemIcon>
-                    <ListItemText primary="تسجيل الدخول" sx={{ '& span': { fontFamily: 'Almarai', fontWeight: 900, color: '#db262a' } }} />
-                </ListItemButton>
+            {/* About */}
+            <ListItem button component={Link} to="/من نحن" onClick={() => setDrawerOpen(false)}>
+              <ListItemIcon><InfoIcon /></ListItemIcon>
+              <ListItemText primary="من نحن" sx={{ "& span": { fontFamily: "Almarai" } }} />
             </ListItem>
-        </List>
-    </Box>
-</Drawer>
-        </>
-    );
+
+            {/* Login CTA */}
+            <Box sx={{ p: 2 }}>
+              <Button
+                fullWidth
+                variant="contained"
+                href="https://talabksys.ly"
+                sx={{ bgcolor: RED, fontFamily: "Almarai" }}
+              >
+                تسجيل الدخول
+              </Button>
+            </Box>
+          </List>
+        </Box>
+      </Drawer>
+    </>
+  );
 }
-
-export default Nav;

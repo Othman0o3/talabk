@@ -23,7 +23,6 @@ function Main({MainRef, servicesRef, ratesRef, contactRef }){
             </Box>
 
             <Box ref={contactRef} sx={{ py: 10 }}>
-                <Footer />
             </Box>
         </Box>
     )
