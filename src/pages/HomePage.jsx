@@ -4,7 +4,6 @@ import StatsSection from "../components/stat";
 import Footer from "../components/footer";
 import { Box } from "@mui/material";
 import Services from "../components/services";
-import PriceCalculator from "../components/calculator";
 function Main({MainRef, servicesRef, ratesRef, contactRef }){
     return(
         <Box>
@@ -18,9 +17,6 @@ function Main({MainRef, servicesRef, ratesRef, contactRef }){
                 <Services />
             </Box>
 
-            <Box ref={ratesRef} sx={{ minHeight: '80vh', py: 10, bgcolor: '#f9f9f9' }}>
-                <PriceCalculator/>
-            </Box>
 
             <Box ref={contactRef} sx={{ py: 10 }}>
             </Box>

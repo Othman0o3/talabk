@@ -6,13 +6,13 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 import HomePage from "./pages/HomePage";
-import PricesPage from "./pages/PricingPage";
 import StoreServicesPage from "./pages/StoreServices";
 import DriverServicesPage from "./pages/DriverServices";
 import Estore from "./pages/Estore";
 import ShippingPoliciesPage from "./pages/policy";
 import TrackingPage from "./pages/TrackingPage";
 import AboutUsPage from "./pages/AboutUsPage";
+import PricingPage from "./pages/pricingpage";
 
 const theme = createTheme({
   typography: { fontFamily: '"Almarai", sans-serif' },
@@ -49,13 +49,13 @@ export default function App() {
             }
           />
           <Route path="/الرئيسية" element={<HomePage MainRef={MainRef} />} />
-          <Route path="/الأسعار" element={<PricesPage />} />
           <Route path="/خدمات المتاجر" element={<StoreServicesPage />} />
           <Route path="/خدمات السائقين" element={<DriverServicesPage />} />
-          <Route path="/متجر طلبك" element={<Estore />} />
+          <Route path="/طلبك حول العالم" element={<Estore />} />
           <Route path="/سياسات الشحن" element={<ShippingPoliciesPage />} />
           <Route path="/tracking/:OrderID" element={<TrackingPage />} />
           <Route path="/من نحن" element={<AboutUsPage />} />
+          <Route path="/الأسعار" element={<PricingPage/>}/>
         </Routes>
         <Footer contactRef={contactRef} />
       </Router>

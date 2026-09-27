@@ -274,7 +274,7 @@ export default function PricingPage() {
                 </Typography>
                 <Grid container spacing={3}>
                   {[
-                    { name: "SHEIN",               desc: "شراء وشحن مجاني لجميع الطلبيات" },
+                    { name: "SHEIN"},
                     { name: "أسواق دبي والشارقة",  desc: "تجميع وشحن بحري وجوي من الإمارات" },
                     { name: "تركيا والصين",         desc: "تواصل مع المصانع والأسواق العالمية" },
                   ].map((src) => (

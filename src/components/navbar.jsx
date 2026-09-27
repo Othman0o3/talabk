@@ -10,6 +10,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import BuildIcon from "@mui/icons-material/Build";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import StoreMallDirectoryIcon from "@mui/icons-material/StoreMallDirectory";
+import PublicIcon from '@mui/icons-material/Public';
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import PhoneIcon from "@mui/icons-material/Phone";
 import SecurityIcon from "@mui/icons-material/Security";
@@ -154,8 +155,7 @@ export default function Navbar({ MainRef, servicesRef, ratesRef, contactRef }) {
               </Menu>
             </Box>
 
-            <Button component={Link} to="/الأسعار" sx={navBtnSx}>الأسعار</Button>
-            <Button component={Link} to="/متجر طلبك" sx={navBtnSx}>المتجر</Button>
+            <Button component={Link} to="/طلبك حول العالم " sx={navBtnSx}>طلبك حول العالم</Button>
             <Button onClick={() => scrollToSection("/contact", contactRef)} sx={navBtnSx}>اتصل بنا</Button>
             <Button component={Link} to="/سياسات الشحن" sx={navBtnSx}>السياسات</Button>
             <Button component={Link} to="/من نحن" sx={navBtnSx}>من نحن</Button>
@@ -219,16 +219,12 @@ export default function Navbar({ MainRef, servicesRef, ratesRef, contactRef }) {
               </Box>
             </Collapse>
 
-            {/* Prices */}
-            <ListItem button component={Link} to="/الأسعار" onClick={() => setDrawerOpen(false)}>
-              <ListItemIcon><LocalShippingIcon /></ListItemIcon>
-              <ListItemText primary="الأسعار" sx={{ "& span": { fontFamily: "Almarai" } }} />
-            </ListItem>
+
 
             {/* Store */}
-            <ListItem button component={Link} to="/متجر طلبك" onClick={() => setDrawerOpen(false)}>
-              <ListItemIcon><StoreMallDirectoryIcon /></ListItemIcon>
-              <ListItemText primary="المتجر" sx={{ "& span": { fontFamily: "Almarai" } }} />
+            <ListItem button component={Link} to="/طلبك حول العالم" onClick={() => setDrawerOpen(false)}>
+              <ListItemIcon><PublicIcon /></ListItemIcon>
+              <ListItemText primary="طلبك حول العالم" sx={{ "& span": { fontFamily: "Almarai" } }} />
             </ListItem>
 
             {/* Contact */}

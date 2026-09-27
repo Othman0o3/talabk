@@ -9,13 +9,11 @@ import WcIcon from "@mui/icons-material/Wc";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocalFloristIcon from "@mui/icons-material/LocalFlorist";
-import { shippingRates } from "../utils/deliveryData"
+import { shippingRates } from "../utils/deliveryData";
 
-// Exact constants from bundle
 const RED = "#E8322A";
 const GRADIENT = "linear-gradient(135deg, #E8322A 0%, #ff6b6b 100%)";
 
-// ─── Price Result Card (Xp component) ────────────────────────────────────────
 function PriceCard({ icon, title, price, time, color, withPackaging, packagingCost }) {
   return (
     <Paper
@@ -32,23 +30,19 @@ function PriceCard({ icon, title, price, time, color, withPackaging, packagingCo
         },
       }}
     >
-      {/* Color top bar */}
-      <Box sx={{ height: "6px", background: color }} />
+      <Box sx={{ height: "6px", background: color, borderRadius: "24px 24px 0 0" }} />
 
       <Box sx={{ textAlign: "center", p: 4 }}>
-        {/* Icon */}
         <Box sx={{ display: "inline-flex", p: 2, borderRadius: "20px", background: color, mb: 3 }}>
           {icon}
         </Box>
 
-        {/* Title */}
         <Typography variant="h6" sx={{ fontFamily: "Almarai", fontWeight: 800, mb: 1 }}>
           {title}
         </Typography>
 
-        {/* Price */}
         <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "center", my: 1 }}>
-          <Typography variant="h3" sx={{ fontWeight: 900, color }}>
+          <Typography variant="h4" sx={{ fontWeight: 900, color, direction: "ltr" }}>
             {price || "—"}
           </Typography>
           <Typography variant="h6" sx={{ ml: 1, color: "#b2bec3" }}>
@@ -56,8 +50,7 @@ function PriceCard({ icon, title, price, time, color, withPackaging, packagingCo
           </Typography>
         </Box>
 
-        {/* Packaging note */}
-        {withPackaging && (
+        {withPackaging && packagingCost > 0 && (
           <Typography
             variant="caption"
             sx={{ color: "#2ecc71", fontWeight: 700, display: "block", mb: 1 }}
@@ -66,7 +59,6 @@ function PriceCard({ icon, title, price, time, color, withPackaging, packagingCo
           </Typography>
         )}
 
-        {/* Delivery time */}
         <Box
           sx={{
             display: "flex",
@@ -90,7 +82,7 @@ function PriceCard({ icon, title, price, time, color, withPackaging, packagingCo
   );
 }
 
-// ─── Main Calculator (qx component) ──────────────────────────────────────────
+// ─── Main Calculator ─────────────────────────────────────────────────────────
 export default function Calculator() {
   const [fromBranch, setFromBranch] = useState(null);
   const [toCity, setToCity]         = useState(null);
@@ -113,35 +105,70 @@ export default function Calculator() {
     [toCity, destinations]
   );
 
-  // Exact surcharge logic from bundle (R function)
   const getSurchargeRate = (base) =>
     base <= 20 ? 2 : base <= 30 ? 2.5 : base <= 40 ? 3 : 3.5;
 
-  // Exact packaging cost logic from bundle (S function)
   const packagingCost = () => {
     if (!withPackaging) return 0;
-    const base = 10, perCm = 0.33;
-    const dx = Math.max(0, dims.length - 30);
-    const dy = Math.max(0, dims.width - 30);
-    const dz = Math.max(0, dims.height - 30);
-    return base + (dx + dy + dz) * perCm;
-  };
-
-  // Exact total price logic from bundle (T function)
-  const calcTotal = (basePrice) => {
-    if (!basePrice) return null;
     const { length, width, height, weight } = dims;
-    const isStandard = length <= 30 && width <= 30 && height <= 30;
-    let price = basePrice;
-    if (!isStandard) {
-      const volumeWeight = (length * width * height) / 5000;
-      const chargeableWeight = Math.max(weight, volumeWeight);
-      price = basePrice + chargeableWeight * getSurchargeRate(basePrice);
+
+    const sortedDims = [length, width, height].sort((a, b) => b - a);
+
+    if (weight <= 0.5 && sortedDims[0] <= 10 && sortedDims[1] <= 10 && sortedDims[2] <= 5) {
+      return 1;
     }
-    return Math.ceil((price + packagingCost()) * 2) / 2;
+    
+    if (weight <= 3 && sortedDims[0] <= 20 && sortedDims[1] <= 20 && sortedDims[2] <= 15) {
+      return 3;
+    }
+    
+    return 5; 
   };
 
-  // Exact input style from bundle (E object)
+  const calcTotal = (basePrice) => {
+    if (basePrice === undefined || basePrice === null) return null;
+
+    const { length, width, height, weight } = dims;
+
+    const exceedsDimensions = length > 30 || width > 30 || height > 30;
+    const exceedsWeight = weight > 5;
+    const applyVolumetric = exceedsDimensions || exceedsWeight;
+
+    const calcSingleValue = (bp) => {
+      let price = bp;
+      let chargeableWeight = weight;
+
+      if (applyVolumetric) {
+        const volumeWeight = (length * width * height) / 5000;
+        
+        chargeableWeight = Math.max(weight, volumeWeight);
+        
+        price = bp + chargeableWeight * getSurchargeRate(bp);
+      }
+
+      return Math.ceil((price + packagingCost()) * 2) / 2;
+    };
+
+    const bpStr = basePrice.toString();
+    
+    if (bpStr.includes('.')) {
+      const parts = bpStr.split('.');
+      const p1 = Number(parts[0]);
+      
+      let p2Str = parts[1];
+      if (p2Str.length === 1) p2Str += "0"; 
+      
+      const p2 = Number(p2Str);
+
+      const total1 = calcSingleValue(p1);
+      const total2 = calcSingleValue(p2);
+
+      return `${total1} , ${total2}`;
+    } else {
+      return calcSingleValue(Number(basePrice));
+    }
+  };
+
   const inputSx = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "16px",
@@ -154,7 +181,6 @@ export default function Calculator() {
 
   return (
     <Box sx={{ maxWidth: 1050, mx: "auto", p: { xs: 2, md: 4 }, direction: "rtl" }}>
-      {/* Title */}
       <Box sx={{ textAlign: "center", mb: 6 }}>
         <Typography
           variant="h3"
@@ -171,7 +197,6 @@ export default function Calculator() {
         </Typography>
       </Box>
 
-      {/* Inputs card */}
       <Paper
         elevation={0}
         sx={{
@@ -184,7 +209,6 @@ export default function Calculator() {
         }}
       >
         <Grid container spacing={4}>
-          {/* From branch */}
           <Grid item xs={12} md={6}>
             <Autocomplete
               options={branches}
@@ -196,7 +220,6 @@ export default function Calculator() {
             />
           </Grid>
 
-          {/* To city */}
           <Grid item xs={12} md={6}>
             <Autocomplete
               options={destinations.map((d) => d.city)}
@@ -209,7 +232,6 @@ export default function Calculator() {
             />
           </Grid>
 
-          {/* Divider */}
           <Grid item xs={12}>
             <Divider sx={{ my: 1 }}>
               <Typography
@@ -221,7 +243,6 @@ export default function Calculator() {
             </Divider>
           </Grid>
 
-          {/* Dimensions */}
           {[
             { label: "الطول", name: "length", unit: "سم" },
             { label: "العرض", name: "width",  unit: "سم" },
@@ -244,7 +265,6 @@ export default function Calculator() {
             </Grid>
           ))}
 
-          {/* Packaging toggle */}
           <Grid item xs={12} sm={2.4}>
             <Box
               sx={{
@@ -280,11 +300,9 @@ export default function Calculator() {
           </Grid>
         </Grid>
 
-        {/* Results */}
         {destination && (
           <Box sx={{ mt: 7 }}>
             <Grid container spacing={3} justifyContent="center">
-              {/* Home Delivery */}
               <Grid item xs={12} sm={6} md={4}>
                 <Fade in style={{ transitionDelay: "100ms" }}>
                   <Box>
@@ -301,8 +319,7 @@ export default function Calculator() {
                 </Fade>
               </Grid>
 
-              {/* Branch Pickup */}
-              {destination.branchPickup !== undefined && (
+              {destination.branchPickup > 0 && (
                 <Grid item xs={12} sm={6} md={4}>
                   <Fade in style={{ transitionDelay: "200ms" }}>
                     <Box>
@@ -314,14 +331,13 @@ export default function Calculator() {
                         color="#00b894"
                         withPackaging={withPackaging}
                         packagingCost={packagingCost()}
-                      />
+                    />
                     </Box>
                   </Fade>
                 </Grid>
               )}
 
-              {/* Female Delivery */}
-              {destination.female !== undefined && (
+              {destination.female > 0 && (
                 <Grid item xs={12} sm={6} md={4}>
                   <Fade in style={{ transitionDelay: "300ms" }}>
                     <Box>
@@ -343,7 +359,6 @@ export default function Calculator() {
         )}
       </Paper>
 
-      {/* Note bar */}
       <Fade in style={{ transitionDelay: "500ms" }}>
         <Box
           sx={{
@@ -359,10 +374,10 @@ export default function Calculator() {
           <LocalFloristIcon sx={{ color: RED }} />
           <Box>
             <Typography sx={{ fontFamily: "Almarai", fontWeight: 800, color: "#2d3436" }} variant="body2">
-              ملاحظة حول الحجم والتغليف:
+              ملاحظة حول الحجم والتغليف المعتمد:
             </Typography>
             <Typography sx={{ fontFamily: "Almarai", color: "#636e72", fontSize: "0.85rem" }}>
-              يتم احتساب الوزن الحجمي إذا تجاوز الطرد 30سم. التغليف يبدأ من 10 د.ل ويضاف 0.33 د.ل لكل سم إضافي في أبعاد الطرد.
+              يُطبق احتساب الوزن الحجمي إذا تجاوز الطرد 30 سم في أي من أبعاده أو زاد وزنه الفعلي عن 5 كجم. التغليف يتبع تسعيرة ثابتة (1، 3، أو 5 د.ل) بحسب الحجم والوزن الفعلي للشحنة.
             </Typography>
           </Box>
         </Box>
