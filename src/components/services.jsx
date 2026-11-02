@@ -53,7 +53,6 @@ export default function Services() {
       }}
     >
       <Container maxWidth="lg">
-        {/* ── Header ── */}
         <Box sx={{ textAlign: "center", mb: { xs: 5, md: 8 }, px: 2 }}>
           <Typography
             variant="h3"
@@ -83,7 +82,6 @@ export default function Services() {
           <Box sx={{ width: 60, height: 4, bgcolor: RED, mx: "auto", borderRadius: 2 }} />
         </Box>
 
-        {/* ── Cards: scroll on mobile, wrap on desktop ── */}
         <Box
           sx={{
             display: "flex",

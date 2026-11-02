@@ -87,7 +87,7 @@ export default function Footer() {
               روابط سريعة
             </Typography>
             <Stack spacing={2}>
-              {["الرئيسية", "خدماتنا", "أسعار التوصيل", "اتصل بنا"].map((label) => (
+              {["الرئيسية", "خدماتنا", "اتصل بنا"].map((label) => (
                 <MuiLink
                   key={label}
                   href="#"
